@@ -1,5 +1,6 @@
 import sys
 import atheris
+import json
 
 from ofunctions.json_sanitize import json_sanitize
 
@@ -14,10 +15,23 @@ def RunTest (InputData):
         decoder = json.JSONDecoder()
         encoder = json.JSONEncoderForHTML()
 
-        InputData = json_sanitize(InputData)
+        fdp = atheris.FuzzedDataProvider(InputData)
+        original = fdp.ConsumeString(InputData)
 
-        en = encoder.encode(InputData)
+        original = json_sanitize(original)
+
+        with open("tests/generated.json", 'r') as input_file:
+            input_str = input_file.read()
+            json_ogn = json.loads(input_str)
+            json_ogn['extra'] = original
+            input_str = json.dumps(json_ogn)
+
+
+
+        en = encoder.encode(input_str)
         decoder.decode(en)
+
+        input_file.close()
         
     except Exception as e:
         print(e)
