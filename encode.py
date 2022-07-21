@@ -1,6 +1,7 @@
 import sys
 import atheris
 import json
+import random
 
 from ofunctions.json_sanitize import json_sanitize
 
@@ -16,17 +17,19 @@ def RunTest (InputData):
         encoder = json.JSONEncoderForHTML()
 
         fdp = atheris.FuzzedDataProvider(InputData)
-        original = fdp.ConsumeString(InputData)
+        original = fdp.ConsumeString(sys.maxsize)
 
         original = json_sanitize(original)
 
-        with open("tests/generated.json", 'r') as input_file:
+        file_num = random.randint(1, 4)
+
+        file_path = "tests/generated(" + str(file_num) + ").json"
+
+        with open(file_path, 'r') as input_file:
             input_str = input_file.read()
             json_ogn = json.loads(input_str)
-            json_ogn['extra'] = original
+            json_ogn.append(original)
             input_str = json.dumps(json_ogn)
-
-
 
         en = encoder.encode(input_str)
         decoder.decode(en)
