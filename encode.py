@@ -7,10 +7,8 @@ with atheris.instrument_imports(key="simplejson"):
 @atheris.instrument_func    
 def RunTest (InputData):
 
-    FORMAT = 'utf8'
-
     try:
-        InputData = InputData.encode(FORMAT)
+        InputData = InputData.decode("utf-8")
         decoder = json.JSONDecoder()
         encoder = json.JSONEncoderForHTML()
         
